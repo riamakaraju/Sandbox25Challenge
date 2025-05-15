@@ -3,10 +3,10 @@ import java.util.ArrayList;
 //represents a user in given JSON data
 public class User {
     String name;
-    String userId;
+    int userId;
     ArrayList<Integer> reviews;
 
-    User(String name, String userId, ArrayList<Integer> reviews) {
+    User(String name, int userId, ArrayList<Integer> reviews) {
         this.name = name;
         this.userId = userId;
         this.reviews = reviews;
@@ -16,7 +16,7 @@ public class User {
         return this.name;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return this.userId;
     }
 

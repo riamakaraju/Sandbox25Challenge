@@ -1,13 +1,106 @@
 import com.google.gson.Gson;
 import java.io.Reader;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
+    /*
+     "companies": {
+        "Amazon": {
+            "Software Developer": {
+                    "name": "Software Developer",
+                    "id": 25,
+                    "avgPay": 38.00,
+                    "avgRating": 1.00,
+                    "reviews": [
+                {
+                    "user": "Sarah Zhang",
+                        "rating": 1,
+                        "pay": 38,
+                        "review": 9935
+                }
+                ]
+            }
+
+     */
+
+    static Map<Integer, List<Review>> mapOfReviews = new HashMap<>();
+    static Map<Integer, String> userIdToName = new HashMap<>();
+
+    //makes the map of all roles in a company
+    public static Map<String, Object> makeMapOfRoles(List<Role> rolesInCompany) {
+        Map<String, Object> returnRoles = new LinkedHashMap<>();
+        for (Role role : rolesInCompany) {
+            Map<String, Object> newRole = new LinkedHashMap<>();
+            newRole.put("name", role.getRole());
+            newRole.put("id", role.getRoleId());
+            newRole.put("avgPay", calcAvgPay(role.getRoleId()));
+            newRole.put("avgRating", calcAvgRating(role.getRoleId()));
+            newRole.put("reviews", makeListOfReviews(role.getRoleId()));
+            returnRoles.put(role.getRole(), newRole);
+        }
+        return returnRoles;
+    }
+
+    // makes the list of reviews for one role (:
+    public static List<Object> makeListOfReviews(int id) {
+        List<Object> returnReviews = new ArrayList<Object>();
+        List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
+        //if there are no reviews for a role
+        if (tempListOfReviews == null) {
+            return returnReviews;
+        }
+        // if there are review(s) for a role
+        else {
+            for (Review review : tempListOfReviews) {
+                Map<String, Object> tempReview = new LinkedHashMap<>();
+                tempReview.put("user", matchName(review.getUserId()));
+                tempReview.put("rating", review.getOverallScore());
+                tempReview.put("pay", review.getHourlyPay());
+                tempReview.put("review", review.getRatingId());
+                returnReviews.add(tempReview);
+            }
+        }
+        return returnReviews;
+    }
+
+    // match userId to name
+    public static String matchName(int userId) {
+        return Main.userIdToName.get(userId);
+    }
+
+    //calculates average rating of a role
+    public static double calcAvgRating(int id) {
+        List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
+        double avgRating = 0.0;
+        if (tempListOfReviews == null) {
+            return avgRating;
+        }
+        else {
+            for (Review review : tempListOfReviews) {
+                avgRating += review.getOverallScore();
+            }
+        }
+        return avgRating / tempListOfReviews.size();
+    }
+
+    // calculates average pay of a role
+    public static double calcAvgPay(int id) {
+        List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
+        double avgPay = 0.0;
+        if (tempListOfReviews == null) {
+            return avgPay;
+        }
+        else {
+            for (Review review : tempListOfReviews) {
+                avgPay += review.getHourlyPay();
+            }
+        }
+        return avgPay / tempListOfReviews.size();
+    }
+
+
 
     public static void main(String[] args) {
 
@@ -18,38 +111,60 @@ public class Main {
 
             Gson gson = new Gson();
 
-
+            //inputting the JSON roles into allRoles, creating a Role object
+            // for each review
             Roles allroles = gson.fromJson(readerRole, Roles.class);
             ArrayList<Role> roles = allroles.getRoles();
 
+            //inputting the JSON roles into allReviews, creating a Review object
+            // for each review
             Reviews allReviews = gson.fromJson(readerReview, Reviews.class);
             ArrayList<Review> reviews = allReviews.getReviews();
 
+            //inputting the JSON users into allUsers, creating a User object
+            // for each user
             Users allUsers = gson.fromJson(readerUser, Users.class);
             ArrayList<User> users = allUsers.getUsers();
 
-            //sorts all the Roles by COMPANY
+            //sorts all the Roles by COMPANY, puts them into sortedRoles
             List<List<Role>> sortedRoles = new ArrayList<>(
                     roles.stream()
                             .collect(Collectors.groupingBy(Role::getCompany))
                             .values());
-            // sorts all the Reviews by ROLE
+
+            // sorts all the Reviews by ROLE, puts them into sortedReviews
             List<List<Review>> sortedReviews = new ArrayList<>(
                     reviews.stream()
                             .collect(Collectors.groupingBy(Review::getRoleId))
                             .values());
 
-            Map<String, Object> returnInfo = new HashMap<>();
-            //for each company, makes a map where the key is the company's name as a String
-            //and the value is the roles in the company
-            for (List<Role> comp : sortedRoles) {
-                returnInfo.put(comp.get(0).getCompany(), helperRoles(comp));
+            // mapping each roleId to the list of reviews of that role
+
+            for (List<Review> listOfReviews : sortedReviews) {
+                mapOfReviews.put(listOfReviews.get(0).getRoleId(), listOfReviews);
             }
+
+            // makes map that links userId to user's name for quick usage when sorting (:
+            for (User user : users) {
+                userIdToName.put(user.getUserId(), user.getName());
+            }
+
+            // makes the return map of all companies
+            Map<String, Object> returnCompanies = new TreeMap<>();
+            for (List<Role> rolesInCompany : sortedRoles) {
+                returnCompanies.put(rolesInCompany.get(0).getCompany(), makeMapOfRoles(rolesInCompany));
+            }
+
+            Map<String, Object> finalReturn = new LinkedHashMap<>();
+            finalReturn.put("companies", returnCompanies);
+
+            System.out.println(gson.toJson(finalReturn));
         }
 
 
         catch (Exception e) {
-            System.out.println("Try again! Something went wrong.");
+            System.out.println("Try again! Something went wrong." + e);
+            e.printStackTrace();
         }
     }
 }

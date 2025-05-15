@@ -21,4 +21,5 @@ public class Role {
     public String getCompany() {
         return this.company;
     }
+
 }
