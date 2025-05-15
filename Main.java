@@ -27,8 +27,8 @@ public class Main {
     }
 
     // makes the list of reviews for one role (:
-    public static List<Object> makeListOfReviews(int id) {
-        List<Object> returnReviews = new ArrayList<Object>();
+    public static List<Map<String, Object>> makeListOfReviews(int id) {
+        List<Map<String, Object>> returnReviews = new ArrayList<Map<String, Object>>();
         //finds all the reviews for a certain role based on roleid
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
         //if there are no reviews for a role
@@ -65,8 +65,7 @@ public class Main {
             }
         };
         System.out.println(mapComparator);
-        Collections.sort(returnReviews, mapComparator);
-
+        return Collections.sort(returnReviews, mapComparator);
     }
 
     // match userId to name
