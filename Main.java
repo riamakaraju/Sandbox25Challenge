@@ -3,6 +3,8 @@ import java.io.Reader;
 import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+
 
 public class Main {
     //defining mapOfReviews in advance as empty maps to be populated with data in main function
@@ -46,7 +48,14 @@ public class Main {
                 returnReviews.add(tempReview);
             }
         }
-        return returnReviews;
+        SortingUtils.quickSort(sortedReviews, new Comparator<Review>() {
+            public int compare(Map<String, Object> r1, Map<String, Object> r2) {
+                int diff = r1.get("rating")().compareTo(r2.get("rating")());
+                if (diff != 0) return diff;
+                return Long.compare(r1.getId(), r2.getId());
+            }
+        });
+
     }
 
     // match userId to name
@@ -57,7 +66,7 @@ public class Main {
     //calculates average rating of a role
     public static double calcAvgRating(int id) {
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
-        double avgRating = 0.0;
+        float avgRating = 0;
         //if there are no reviews, the rating is 0
         if (tempListOfReviews == null) {
             return avgRating;
@@ -74,7 +83,7 @@ public class Main {
     // calculates average pay of a role
     public static double calcAvgPay(int id) {
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
-        double avgPay = 0.0;
+        float avgPay = 0;
         //if there are no reviews, the pay is 0
         if (tempListOfReviews == null) {
             return avgPay;

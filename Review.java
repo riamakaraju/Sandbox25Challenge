@@ -41,5 +41,4 @@ public class Review {
         return this.userId;
     }
 
-
 }
