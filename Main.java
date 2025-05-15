@@ -5,26 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    /*
-     "companies": {
-        "Amazon": {
-            "Software Developer": {
-                    "name": "Software Developer",
-                    "id": 25,
-                    "avgPay": 38.00,
-                    "avgRating": 1.00,
-                    "reviews": [
-                {
-                    "user": "Sarah Zhang",
-                        "rating": 1,
-                        "pay": 38,
-                        "review": 9935
-                }
-                ]
-            }
-
-     */
-
+    //defining mapOfReviews in advance as empty maps to be populated with data in main function
     static Map<Integer, List<Review>> mapOfReviews = new HashMap<>();
     static Map<Integer, String> userIdToName = new HashMap<>();
 
@@ -46,12 +27,15 @@ public class Main {
     // makes the list of reviews for one role (:
     public static List<Object> makeListOfReviews(int id) {
         List<Object> returnReviews = new ArrayList<Object>();
+        //finds all the reviews for a certain role based on roleid
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
         //if there are no reviews for a role
         if (tempListOfReviews == null) {
             return returnReviews;
         }
-        // if there are review(s) for a role
+        // if there are review(s) for a role, for each review in the list of reviews,
+        // formats the data of the review in a single map and adds that map to the
+        //list of review
         else {
             for (Review review : tempListOfReviews) {
                 Map<String, Object> tempReview = new LinkedHashMap<>();
@@ -74,9 +58,11 @@ public class Main {
     public static double calcAvgRating(int id) {
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
         double avgRating = 0.0;
+        //if there are no reviews, the rating is 0
         if (tempListOfReviews == null) {
             return avgRating;
         }
+        //if there are reviews, calculate the average
         else {
             for (Review review : tempListOfReviews) {
                 avgRating += review.getOverallScore();
@@ -89,9 +75,11 @@ public class Main {
     public static double calcAvgPay(int id) {
         List<Review> tempListOfReviews = Main.mapOfReviews.get(id);
         double avgPay = 0.0;
+        //if there are no reviews, the pay is 0
         if (tempListOfReviews == null) {
             return avgPay;
         }
+        //if there are reviews, calculate the average pay
         else {
             for (Review review : tempListOfReviews) {
                 avgPay += review.getHourlyPay();
@@ -101,10 +89,11 @@ public class Main {
     }
 
 
-
     public static void main(String[] args) {
 
         try {
+            // creating a fileReader for each of the three JSON value types we
+            // want to collect (role, review, and user)
             Reader readerRole = new FileReader("requestContent.json");
             Reader readerReview = new FileReader("requestContent.json");
             Reader readerUser = new FileReader("requestContent.json");
@@ -139,29 +128,30 @@ public class Main {
                             .values());
 
             // mapping each roleId to the list of reviews of that role
-
             for (List<Review> listOfReviews : sortedReviews) {
                 mapOfReviews.put(listOfReviews.get(0).getRoleId(), listOfReviews);
             }
 
-            // makes map that links userId to user's name for quick usage when sorting (:
+            // makes map that links userId to user's name for quick usage when sorting
             for (User user : users) {
                 userIdToName.put(user.getUserId(), user.getName());
             }
 
-            // makes the return map of all companies
+            // makes the map of all companies with formatted content
             Map<String, Object> returnCompanies = new TreeMap<>();
             for (List<Role> rolesInCompany : sortedRoles) {
                 returnCompanies.put(rolesInCompany.get(0).getCompany(), makeMapOfRoles(rolesInCompany));
             }
 
+            // makes the final return map with one key value pair
             Map<String, Object> finalReturn = new LinkedHashMap<>();
             finalReturn.put("companies", returnCompanies);
 
+            //converts the formatted data to JSON and prints it
             System.out.println(gson.toJson(finalReturn));
         }
 
-
+        // required catch for fileReader error
         catch (Exception e) {
             System.out.println("Try again! Something went wrong." + e);
             e.printStackTrace();
