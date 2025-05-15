@@ -48,9 +48,8 @@ public class Main {
                 returnReviews.add(tempReview);
             }
         }
-        /*
-        // failed sorting algorithm for reviews in descending order ):
 
+        // sorts the reviews by Rating in descending order (:
         Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
             public int compare(Map<String, Object> rating1, Map<String, Object> rating2) {
                 if (rating2.get("rating") ==  (rating1.get("rating"))) {
@@ -64,11 +63,8 @@ public class Main {
                 }
             }
         };
-        System.out.println(mapComparator);
-        return Collections.sort(returnReviews, mapComparator);
 
-         */
-
+        returnReviews.sort(mapComparator);
         return returnReviews;
     }
 
