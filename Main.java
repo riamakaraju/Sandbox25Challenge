@@ -48,6 +48,7 @@ public class Main {
                 returnReviews.add(tempReview);
             }
         }
+        /*
         SortingUtils.quickSort(sortedReviews, new Comparator<Review>() {
             public int compare(Map<String, Object> r1, Map<String, Object> r2) {
                 int diff = r1.get("rating")().compareTo(r2.get("rating")());
@@ -55,6 +56,16 @@ public class Main {
                 return Long.compare(r1.getId(), r2.getId());
             }
         });
+
+         */
+
+        Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
+            public int compare(Map<String, Object> rating1, Map<String, Object> rating2) {
+                return rating2.get("rating").compareTo(rating1.get("rating"));
+            }
+        };
+        System.out.println(mapComparator);
+        Collections.sort(returnReviews, mapComparator);
 
     }
 
