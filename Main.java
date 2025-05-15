@@ -49,23 +49,27 @@ public class Main {
             }
         }
         /*
-        SortingUtils.quickSort(sortedReviews, new Comparator<Review>() {
-            public int compare(Map<String, Object> r1, Map<String, Object> r2) {
-                int diff = r1.get("rating")().compareTo(r2.get("rating")());
-                if (diff != 0) return diff;
-                return Long.compare(r1.getId(), r2.getId());
-            }
-        });
-
-         */
+        // failed sorting algorithm for reviews in descending order ):
 
         Comparator<Map<String, Object>> mapComparator = new Comparator<Map<String, Object>>() {
             public int compare(Map<String, Object> rating1, Map<String, Object> rating2) {
-                return rating2.get("rating").compareTo(rating1.get("rating"));
+                if (rating2.get("rating") ==  (rating1.get("rating"))) {
+                    return 0;
+                }
+                else if ((int)rating2.get("rating") > (int)(rating1.get("rating"))) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
             }
         };
         System.out.println(mapComparator);
         return Collections.sort(returnReviews, mapComparator);
+
+         */
+
+        return returnReviews;
     }
 
     // match userId to name
