@@ -6,7 +6,7 @@ Following the guidance gven with Java's gson that the challenge page linked, I c
 
 Java -> Java
 
-Now, I had to figure out how to use the Java objects I created to the format that I want to return it in. I mainly did this using Maps (with key and value pairs) and Lists. HashMaps were used when there is a key value pair to be stored, such as "roleId" to 4582 or "name" to "Sarah Zhang". Since the values can be either int, float (for the average calculations), or String, I made most of the general HashMaps as <String, Object>. If there was an instance where I could specify for clarification, I did, but I kept it general to prevent errors. In the future if I had more time, I would clean this up so all the definitions would be exact and not too generalized.
+Now, I had to figure out how to use the Java objects I created to the format that I want to return it in. I mainly did this using Maps (with key and value pairs) and Lists. HashMaps were used when there is a key value pair to be stored, such as "roleId" to 4582 or "name" to "Sarah Zhang". Since the values can be either int, float (for the average calculations), or String, I made most of the general HashMaps as <String, Object>. If there was an instance where I could specify for clarification, I did, but I kept it general to prevent errors. In the future if I had more time, I would clean this up so all the definitions would be exact and not too generalized. I used TreeMaps to sort the companies alphabetically for easier reading, a feature I think would be useful to have!
 
 Lists were used for the all the reviews under a certain role and to store the initial data in a place I could access from later.
 
